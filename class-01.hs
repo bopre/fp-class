@@ -233,20 +233,20 @@ f2c a = (a - 32) * (5 / 9)
       НОД(a, b) = НОД(b, a mod b), если b ≠ 0; 
       НОД(a, 0) = a.
 -}
-gcd' :: Num -> Num -> Num
+gcd' :: Int -> Int -> Int {- a => a -> a -> a-}
 gcd' a 0 = a
-gcd' a b = gcd' b (a `mod` b)
+gcd' a b = gcd' b (mod a b)
 
 -- з) Функция, возвращающая название дня недели по его номеру (от 1 до 7),
 --    если номер неправильный, генерируется исключение (функция error).
 dayOfWeek :: Int -> String
-dayOfWeek 1 = "Понедельник"
-dayOfWeek 2 = "Вторник"
-dayOfWeek 3 = "Среда"
-dayOfWeek 4 = "Четвер"
-dayOfWeek 5 = "Пятница"
-dayOfWeek 6 = "Суббота"
-dayOfWeek 7 = "Воскресение"
+dayOfWeek 1 = "Monday"
+dayOfWeek 2 = "Tuesday"
+dayOfWeek 3 = "Wednesday"
+dayOfWeek 4 = "Thirsday"
+dayOfWeek 5 = "Friday"
+dayOfWeek 6 = "Saturday"
+dayOfWeek 7 = "Sunday"
 dayOfWeek _ = error "FATAL ERROR"
 
 
@@ -268,13 +268,21 @@ sign a
 	  x^2,  если 0 < x < 2,
           4,    если x ≥ 2.
 -}
-
-eval_f = undefined
+eval_f :: Double -> Double
+eval_f x
+   | x<=0 = (-1) * x
+   | x<2 = x^2
+   | otherwise = 4
 
 -- б) Написать функцию, возвращающую текстовую характеристику ("hot", "warm", "cool", "cold")
 -- по заданному значению температуры в градусах Цельсия.
 describeTemperature :: Double -> String
-describeTemperature = undefined
+describeTemperature x
+   | x>40 = "hot"
+   | x>30 = "warm"
+   | x>20 = "cool"
+   | otherwise = "cold"
+
 
 {- 
    в) (*) Дан список температур в градусах Фаренгейта. Вывести для каждого значения
@@ -282,6 +290,10 @@ describeTemperature = undefined
 
   Решение:
 > map (describeTemperature . f2c) [82, 94, 50, 65, 34]
+
+
+*Main> map (describeTemperature . f2c) [82, 94, 50, 65, 34]
+["cool","warm","cold","cold","cold"]
 
   В этом решении с помощью операции (.) строится композиция (суперпозиция) функций
   и получившаяся функция применяется функцией map к каждому элементу списка.
@@ -296,16 +308,27 @@ sum_n n
   | otherwise = error "n should be >= 1"
 
 -- а) Вычислить сумму всех целых чисел от a до b включительно.
-sum_ab = undefined
+
+sum_ab :: Int -> Int -> Int
+sum_ab a 0 = a
+sum_ab a b = sum_ab (a+b) (b-1)
+
 
 {-
    б) Числовая последовательность определяется следующим образом:
       a1 = 1, a2 = 2, a3 = 3, a_k = a_{k−1} + a_{k−2} − 2*a_{k−3}, k = 4, 5, ...
       Вычислить её n-й элемент.
 -}
-eval_a_n = undefined
+eval_a_n :: Int -> Int
+eval_a_n n
+   | n==1=1
+   | n==2=2
+   | n==3=3
+   | n>3=eval_a_n (n-1) + eval_a_n (n-2) - 2*eval_a_n (n-3)
+   | otherwise = error "FATAL ERROR"
 
 -- в) Вычислить, пользуясь рекурсией, n-ю степень числа a (n - целое):
+pow :: Double -> Int -> Double
 pow = undefined
 
 -- г) Пользуясь ранее написанной функцией pow, вычислить сумму: 1^k + 2^k + ... + n^k.
