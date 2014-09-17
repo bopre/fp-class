@@ -329,7 +329,8 @@ eval_a_n n
 
 -- в) Вычислить, пользуясь рекурсией, n-ю степень числа a (n - целое):
 pow :: Double -> Int -> Double
-pow = undefined
+pow a 0 = 1
+pow a n = a * pow a (n-1)
 
 -- г) Пользуясь ранее написанной функцией pow, вычислить сумму: 1^k + 2^k + ... + n^k.
 sum_nk = undefined
@@ -341,11 +342,22 @@ sum_fact n = undefined
     fact n = undefined
 
 -- е) Количество цифр целого числа
-number_digits = undefined
+number_digits :: Int -> Int
+number_digits n
+   | n<9=1
+   | n>=10= 1 + number_digits (n `div` 10)
+   | otherwise = error "FATAL ERROR"
 
+n_shares:: Int -> Int -> Bool
+n_shares n m
+	| n `mod` m==0=True
+	| otherwise=False
 -- ж) Проверить, является ли заданное число простым.
-isPrime = undefined
-
+isPrime :: Int -> Bool
+isPrime n = step (n `div` 2)
+	where step i 
+		|i==1=True
+		|otherwise = (not (n_shares n i)) && step (i-1)
 -- 8) Разное
 
 {-
@@ -355,7 +367,12 @@ isPrime = undefined
   не делятся на 400 (например, годы 300, 1300 и 1900 не являются високосными,
   а 1200 и 2000 — являются).
 -}
-
-nDays year = undefined
+nDays :: Int -> Int
+nDays year
+	|(isLeap year)=366
+	|otherwise=365
   where
-    isLeap = undefined
+    isLeap n
+	|(n `mod` 4) /= 0 = False
+	|(n `mod` 100 == 0)&&(n `mod` 400 /= 0)=False
+	|otherwise = True
