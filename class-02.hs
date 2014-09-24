@@ -209,3 +209,19 @@ make_with_index l = step l 0
 		step [x] i = [(x,i)]
 		step (x:xs) i = (x,i):(step xs (i+1))
 -- з) Eq a => [a] -> [a]
+--сортировка
+sortList [] = []
+sortList [a] = [a]
+sortList [a,b]
+	|a>b=[a,b]
+	|otherwise=[b,a]
+sortList (x:xs) = concatinate_list (concatinate_list (sortList (firstPart xs)) [x]) (sortList (nextPart xs))
+	where
+		firstPart [] = []
+		firstPart (y:ys)
+			|x<=y=y:(firstPart ys)
+			|otherwise=firstPart ys
+		nextPart [] = []
+		nextPart (y:ys)
+			|x>y=y:(nextPart ys)
+			|otherwise=nextPart ys
