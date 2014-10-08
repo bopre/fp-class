@@ -55,7 +55,7 @@ getFirstN (y:ys) n = getFirstN' (foldl (step) [(y,0)] ys)
 	      step' z (x,f) = if (f>=n) then z else x:z
   --c) Сформировать список, содержащий последние n элементов исходного.
 getWithoutFirstN (y:ys) n = getLastN' (foldl (step) [(y,0)] ys)
-	where step ((x1,x2):xs) x = (x,x2+1):((x1,x2):xs)
+	where step ((x1,x2):xs) x = (x,x2+1):((x1,x2):xs)1
 	      getLastN' = foldl (step') []
 	      step' z (x,f) = if (f>=n) then x:z else z
 
@@ -99,7 +99,12 @@ sumAB a b = foldl (\x y -> x+y) 0 (buildList a b)
 		|x>y=buildList x y
 		|otherwise=[x..y]
   --b) Найти сумму факториалов чисел от a до b (повторные вычисления факториалов не допускаются).
-
+{-
+factN 0 = 1
+factN n = n*(factN (n-1))
+factListAB a b = foldr (\(z:zs) x -> (z*x):(z:zs)) [factN a] listAB' (a+1) b
+	where listAB' x y = [x..y] 
+-}
   --с) Сформировать список из первых n чисел Фибоначчи.
 
   --d) Пользуясь рядом Тейлора, вычислить значение синуса заданного числа x (использовать
