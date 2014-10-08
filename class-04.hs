@@ -42,20 +42,38 @@ find_min_odd_elem l p = foldl (step) p l
  2. Свёртки, формирующие списки
   a) Сформировать список, содержащий каждый второй элемент исходного.
 -}
-{-
+
 getEverySecond (y:ys) = getSecond' (foldl (step) [(y,0)] ys)
 	where step ((x1,x2):xs) x = if(x2==0)then(x,1):((x1,x2):xs)else(x,0):((x1,x2):xs) 
 	      getSecond' = foldl (step') []
-	      step' = 
--}
+	      step' z (x,f) = if (f==0) then z else x:z
+
   --b) Сформировать список, содержащий первые n элементов исходного.
-
+getFirstN (y:ys) n = getFirstN' (foldl (step) [(y,0)] ys)
+	where step ((x1,x2):xs) x = (x,x2+1):((x1,x2):xs)
+	      getFirstN' = foldl (step') []
+	      step' z (x,f) = if (f>=n) then z else x:z
   --c) Сформировать список, содержащий последние n элементов исходного.
+getWithoutFirstN (y:ys) n = getLastN' (foldl (step) [(y,0)] ys)
+	where step ((x1,x2):xs) x = (x,x2+1):((x1,x2):xs)
+	      getLastN' = foldl (step') []
+	      step' z (x,f) = if (f>=n) then x:z else z
 
+listLength [] = 0
+listLength (x:xs) = 1+(listLength xs)
+
+getLastN l n = getWithoutFirstN l ((listLength l) - n)
   --d) Сформировать список, содержащий все элементы исходного списка, большие левого соседа.
-
+getElemsGreaterLeftElem (y:ys) = getGreater' (foldl (step) [(y,1)] ys)
+	where step ((x1,x2):xs) x = if(x>x1)then(x,1):((x1,x2):xs)else(x,0):((x1,x2):xs)
+	      getGreater' = foldl (step') []
+	      step' z (x,f) = if (f==1) then x:z else z
   --e) Сформировать список, содержащий все локальные минимумы исходного списка.
-
+getLocalMinimum (y:ys) = getMimimums' (foldl (step) [(y,1)] ys)
+	where step ((x1,x2):xs) x = if(x<x1)then(x,1):((x1,x2):xs)else(x,0):((x1,x2):xs)
+	      getMimimums' (z:zs) = map (\(x,f)->x) (filter (\(x,f)->f==2) ( foldl (step') [z] zs))
+	      step' [(x1,x2)] (x,f) = if (x1>x) then (x,2):[(x1,x2)] else (x,f):[(x1,x2)]
+	      step' ((x1,x2):xs) (x,f) = if (f==1)&&(x1>x) then (x,2):((x1,x2):xs) else (x,f):((x1,x2):xs)
   --f) Дана строка, содержащая слова, разделённые одним или несколькими пробелами. Сформировать
      --список слов этой строки.
 
@@ -75,12 +93,20 @@ getEverySecond (y:ys) = getSecond' (foldl (step) [(y,0)] ys)
 {-
  3. Использование свёртки как носителя рекурсии (для запуска свёртки можно использовать список типа [1..n]).
   a) Найти сумму чисел от a до b.
-  b) Найти сумму факториалов чисел от a до b (повторные вычисления факториалов не допускаются).
-  с) Сформировать список из первых n чисел Фибоначчи.
-  d) Пользуясь рядом Тейлора, вычислить значение синуса заданного числа x (использовать
-     n слагаемых).
-  e) Проверить, является ли заданное целое число простым.
 -}
+sumAB a b = foldl (\x y -> x+y) 0 (buildList a b)
+	where buildList x y
+		|x>y=buildList x y
+		|otherwise=[x..y]
+  --b) Найти сумму факториалов чисел от a до b (повторные вычисления факториалов не допускаются).
+
+  --с) Сформировать список из первых n чисел Фибоначчи.
+
+  --d) Пользуясь рядом Тейлора, вычислить значение синуса заданного числа x (использовать
+     --n слагаемых).
+
+  --e) Проверить, является ли заданное целое число простым.
+
 
 {-
  4. Решить задачу о поиске пути с максимальной суммой в треугольнике (см. лекцию 3) при условии,
