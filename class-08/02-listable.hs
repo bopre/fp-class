@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 {-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+=======
+{-# LANGUAGE TypeSynonymInstances,FlexibleInstances #-}
+>>>>>>> upstream/master
 {-
    Определите класс типов Listable с двумя функциями:
    toList :: a -> [a]
@@ -18,7 +22,7 @@ instance Listable StringDestr where
 {-
   Объявите экземпляры класса типов Listable для следующих типов:
   1) String - строка разбивается по пробелам на список слов.
-  2) Integral a - любое целое число разбивается на список цифр.
+  2) Integer - любое целое число разбивается на список цифр.
 -}
 
 type IntDestr=Int
