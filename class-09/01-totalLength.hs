@@ -4,8 +4,12 @@ import System.Environment
   Написать функцию, которая по заданному списку строк возвращает сумму длин всех строк.
 -}
 
+listLength :: [a]->Int
+listLength [] = 0
+listLength (x:xs) = 1 + (listLength xs)
+
 totalLength :: [String] -> Int
-totalLength = undefined
+totalLength = foldl (\x y -> x + (listLength y)) 0 
 
 {-
   Написать функцию, которая по заданному символу и целому числу n строит список строк,
@@ -13,8 +17,11 @@ totalLength = undefined
 -}
 
 build1 :: Char -> Int -> Maybe [String]
-build1 = undefined
-
+build1 c n = if (n<=0) then Nothing else Just (makeList 1)
+	where   makeList :: Int -> [String]
+		makeList i
+			|i==n=[take n (repeat c)]
+			|otherwise=(take i (repeat c)):(makeList (i+1))
 {-
   Написать функцию, аналогичную по возможностям функции build1, но возвращающую при этом
   значение Either String [String], в котором значение слева должно свидетельствовать об
@@ -25,7 +32,15 @@ build1 = undefined
 -}
 
 build2 :: Char -> Int -> Either String [String]
-build2 = undefined
+build2 c n
+	|n==0=Left "n=0"
+	|n>100=Left "n > 100"
+	|c=='x'=Left "Роспотребнадзор запрещает создавать строки из символа 'x'"
+	|otherwise = Right (makeList 1)
+	where   makeList :: Int -> [String]
+		makeList i
+			|i==n=[take n (repeat c)]
+			|otherwise=(take i (repeat c)):(makeList (i+1))
 
 {-
   Параметрами командной строки являются имя файла, символ, целое число.
