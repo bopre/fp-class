@@ -55,7 +55,8 @@ minData1 needFirst t = minimum $ map (firstOrLast) $ filter (any (\x->x/=Nothing
 -}
 
 minData2 :: Bool -> [SensorData] -> Int
-minData2 needSum = minimum . undefined
+minData2 needSum t = minimum $ map (sumOrProduct) $ filter (any (\x->x/=Nothing)) t
+	where  sumOrProduct l = if needSum then getSum . mconcat . map Sum $ map (fromMaybe 0) l else getProduct . mconcat . map Product $ map (fromMaybe 1) l
 
 {- Попробуйте объединить две предыдущие функции в одну. -}
 
