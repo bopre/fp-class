@@ -22,7 +22,7 @@ maxApp3 a1 a2 a3 = (\x y -> if (x>y) then x else y) <$> ((\x y -> if (x>y) then 
 -}
 {- Реализуйте аналогичную функцию в случае списка значений в контексте. -}
 
-maxApp :: (Ord a, Applicative f) => [f a] -> f a
+ :: (Ord a, Applicative f) => [f a] -> f a
 maxApp [x] = x
 maxApp (x:xs) = max <$> x <*> maxApp xs
 
@@ -31,11 +31,14 @@ maxApp (x:xs) = max <$> x <*> maxApp xs
   список (для каждого из двух экземпляров), Either String и IO.
 -}
 
-{-
+
 main = do
 	x <- maxApp3 (getLine) (getLine) (getLine)
-	putStrLn x
--}
+	putStr "Max is "
+	putStrLn $ show x
+
+	return ()
+
 {- (необязательно)
   Ясно ли вам, что вы реализовали нечто, похожее на моноид на аппликативных функторах?
   Можете ли вы выразить это в коде? Необходимо ли добавлять какие-нибудь ограничения?
