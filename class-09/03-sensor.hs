@@ -63,7 +63,10 @@ minData2 needSum t = minimum $ map (sumOrProduct) $ filter (any (\x->x/=Nothing)
 data SensorTask = NeedFirst | NeedLast | NeedSum | NeedProduct
 
 minData :: SensorTask -> [SensorData] -> Int
-minData st = minimum . undefined
+minData NeedFirst = minData1 True
+minData NeedLast = minData1 False
+minData NeedSum = minData2 True
+minData NeedProduct = minData2 False
 
 {-
   Пользуясь моноидами All, Any и любыми другими, выясните следующую информацию:
