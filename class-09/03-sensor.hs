@@ -80,8 +80,32 @@ minData NeedProduct = minData2 False
 
   Постарайтесь ответить на все вопросы, написав одну функцию.
 -}
+data SensorTask2 = WithoutAnything | AllReading | AnyReading | SumIsBiggerThan | ProductionIsBiggerThan | FirstIsBigger | LastIsBigger
+
+
+countDays :: Int -> SensorTask2 -> [SensorData] -> Int
+countDays br sn2 t = countTrue $ map (someAction sn2) t
+	where  someAction WithoutAnything l= getAll . mconcat . map All $ map (\x->x==Nothing) l
+	       someAction AllReading l= getAll . mconcat . map All $ map (\x->x/=Nothing) l
+	       someAction AnyReading l=getAny . mconcat . map Any $ map (\x->x/=Nothing) l
+      	       someAction SumIsBiggerThan l=(getSum . mconcat . map Sum $ map (fromMaybe 0) l)>br
+	       someAction ProductionIsBiggerThan l=(getProduct . mconcat . map Product $ map (fromMaybe 1) l)>br
+	       someAction FirstIsBigger l=if (not (someAction WithoutAnything l)) then ((fromJust. getFirst . mconcat . map First $ l)>br) else False
+	       someAction LastIsBigger l=if (not (someAction WithoutAnything l)) then ((fromJust. getLast . mconcat . map Last $ l)>br) else False
+	       countTrue [] = 0
+	       countTrue (x:xs) = if x then 1+(countTrue xs) else (countTrue xs)
+
 
 main = do
-  fname <- head `fmap` getArgs
+  [fname,xStr] <- getArgs
+  let x = read xStr :: Int
   sData <- getData `fmap` readFile fname
-  undefined
+  let dataByDays = dataByDay sData
+  putStrLn $ "Days without Data" ++ show (countDays x WithoutAnything dataByDays)
+  putStrLn $ "Days with all Data" ++ show (countDays x AllReading dataByDays)
+  putStrLn $ "Days with any Data" ++ show (countDays x AnyReading dataByDays)
+  putStrLn $ "Days with Data sum bigger than " ++ show x ++ " " ++ show (countDays x SumIsBiggerThan dataByDays)
+  putStrLn $ "Days with Data production bigger than " ++ show x ++ " " ++ show (countDays x ProductionIsBiggerThan dataByDays)
+  putStrLn $ "Days with first Data bigger than " ++ show x ++ " " ++ show (countDays x FirstIsBigger dataByDays)
+  putStrLn $ "Days with last Data bigger than " ++ show x ++ " " ++ show (countDays x LastIsBigger dataByDays)
+  return ()
