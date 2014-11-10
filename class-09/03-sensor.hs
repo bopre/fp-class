@@ -1,5 +1,6 @@
 import System.Environment
 import Data.Monoid
+import Data.Maybe
 
 {-
   Некоторый датчик генерирует по пять сигналов в сутки, часть из которых
@@ -37,7 +38,8 @@ dataByDay (x1:x2:x3:x4:x5:xs) = [x1,x2,x3,x4,x5]:(dataByDay xs)
 -}
 
 minData1 :: Bool -> [SensorData] -> Int
-minData1 needFirst = minimum . undefined
+minData1 needFirst t = minimum $ map (firstOrLast) $ filter (any (\x->x/=Nothing)) t
+	where  firstOrLast l = if needFirst then fromJust. getFirst . mconcat . map First $ l else fromJust. getLast . mconcat . map Last $ l
 
 {-
   Посчитайте минимальное значение среди данных,
