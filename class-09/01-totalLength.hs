@@ -55,4 +55,14 @@ build2 c n
 -}
 
 main = do
-  undefined
+  [fname, ch, xi] <- getArgs
+  let x = (read xi) :: Int
+  let c = (read ch) :: Char
+  res1 <- fmap totalLength getArgs
+  putStrLn $ "Length of args  " ++ show res1
+  res2 <- fmap totalLength ( fmap words (readFile fname))
+  putStrLn $ "Length of file  " ++ show res2
+  let res3 = fmap totalLength $ build1 c x
+  putStrLn $ "Length of build1: " ++ show res3
+  let res4 = fmap totalLength $ build2 c x
+  putStrLn $ "Length of build2: " ++ show res4
