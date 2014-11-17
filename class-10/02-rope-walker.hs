@@ -6,6 +6,7 @@ import Control.Monad
        L 3
        R -1
        B
+       U
        L 1
      и вычисление соответствующего им результата (в решении может пригодиться 
      функция foldr (<=<) return — проверьте её тип для получения подсказки);
@@ -22,16 +23,22 @@ import Control.Monad
 import System.Environment
 
 
-data MoveSt = MoveSt {typeMove :: Char, value :: Int}
+data MoveSt = MoveSt {typeMove :: String, value :: Int}
 
 moveSt :: MoveSt -> Pole -> Either Pole String
 moveSt p (left, right)
-	|(typeMove p)=='R'=landRight (value p) (left, right)
-	|(typeMove p)=='L'=landLeft (value p) (left, right)
+	|(typeMove p)=="R"=landRight (value p) (left, right)
+	|(typeMove p)=="L"=landLeft (value p) (left, right)
+	|(typeMove p)=="U"=unlandAll
 	|otherwise = Right "That was banana..."
 
+
+
 readMoveSt :: String -> MoveSt
-readMoveSt str = let (t:tail)=(words str) in (if (head t) /= 'B' then let (v:tail2)=tail in (MoveSt (head t) (read v)) else (MoveSt (head t) (0)) )
+readMoveSt str = let (t:tail)=(words str) in (case1 t tail)
+	where case1 t tail
+		|(t/="B")&&(t/="U") = let (v:tail2)=tail in (MoveSt t (read v))
+		|otherwise = MoveSt t 0
 
 readMoves :: String -> [MoveSt]
 readMoves str = map readMoveSt (lines str)
@@ -67,6 +74,9 @@ updatePole p = if unbalanced p then Right "disbalanced" else Left p
 
 landLeft :: Birds -> Pole -> Either Pole String
 landLeft n (left, right) = updatePole (left + n, right)
+
+unlandAll :: Either Pole String
+unlandAll = Left (0,0)
 
 landRight :: Birds -> Pole -> Either Pole String
 landRight n (left, right) = updatePole (left, right + n)
