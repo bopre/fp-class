@@ -18,6 +18,35 @@ import Control.Monad
      соответствующие изменения в другие функции;
   4) организуйте масштабное тестирование.
 -}
+import Control.Monad 
+import System.Environment
+
+
+data MoveSt = MoveSt {typeMove :: Char, value :: Int}
+
+moveSt :: MoveSt -> Pole -> Maybe Pole
+moveSt p (left, right)
+	|(typeMove p)=='R'=landRight (value p) (left, right)
+	|(typeMove p)=='L'=landLeft (value p) (left, right)
+	|otherwise = Nothing
+
+readMoveSt :: String -> MoveSt
+readMoveSt str = let (t:tail)=(words str) in (if (head t) /= 'B' then let (v:tail2)=tail in (MoveSt (head t) (read v)) else (MoveSt (head t) (0)) )
+
+readMoves :: String -> [MoveSt]
+readMoves str = map readMoveSt (lines str)
+
+readMovesFromFile :: FilePath -> IO [MoveSt]
+readMovesFromFile fname = readFile fname >>= (return . (map (\x -> readMoveSt x) ) . lines)
+
+runMoves :: [MoveSt] -> Maybe Pole
+runMoves [] = Nothing
+runMoves l = runThis l (0, 0)
+	where runThis [x] p = moveSt x p
+	      runThis (x:xs) p = (moveSt x p) >>= runThis xs
+
+main = readMovesFromFile "birds.txt" >>= return . runMoves
+
 
 type Birds = Int
 
