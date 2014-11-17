@@ -23,13 +23,14 @@ import Control.Monad
 import System.Environment
 
 
-data MoveSt = MoveSt {typeMove :: String, value :: Int}
+data MoveSt = MoveSt {typeMove :: String, value1 :: Int, value2 :: Int}
 
 moveSt :: MoveSt -> Pole -> Either Pole String
 moveSt p (left, right)
-	|(typeMove p)=="R"=landRight (value p) (left, right)
-	|(typeMove p)=="L"=landLeft (value p) (left, right)
+	|(typeMove p)=="R"=landRight (value1 p) (left, right)
+	|(typeMove p)=="L"=landLeft (value1 p) (left, right)
 	|(typeMove p)=="U"=unlandAll
+	|(typeMove p)=="LB"=landBoth (value1 p) (value2 p) (left, right)
 	|otherwise = Right "That was banana..."
 
 
@@ -37,8 +38,9 @@ moveSt p (left, right)
 readMoveSt :: String -> MoveSt
 readMoveSt str = let (t:tail)=(words str) in (case1 t tail)
 	where case1 t tail
-		|(t/="B")&&(t/="U") = let (v:tail2)=tail in (MoveSt t (read v))
-		|otherwise = MoveSt t 0
+		|(t/="B")&&(t/="U") = let (v:tail2)=tail in (MoveSt t (read v) 0)
+		|(t=="LB") = let (v1:v2:tail2)=tail in (MoveSt t (read v1) (read v2))
+		|otherwise = MoveSt t 0 0
 
 readMoves :: String -> [MoveSt]
 readMoves str = map readMoveSt (lines str)
@@ -48,8 +50,6 @@ readMovesFromFile fname = readFile fname >>= (return . (map (\x -> readMoveSt x)
 
 runMoves :: [MoveSt] -> Either Pole String
 runMoves [] = Right "There is no move"
---runMoves l = foldr (\x p = ) (Left (0, 0)) l
-
 runMoves l = runThis l (Left (0, 0))
 	where --runThis :: [MoveSt] -> Either Pole String -> Either Pole String
 	      runThis _ (Right s) = Right s
@@ -73,23 +73,19 @@ updatePole p = if unbalanced p then Right "disbalanced" else Left p
     unbalanced (l, r) = abs (l - r) > balance
 
 landLeft :: Birds -> Pole -> Either Pole String
-landLeft n (left, right) = updatePole (left + n, right)
+landLeft n (left, right) = addStr (updatePole (left + n, right))
+	where addStr (Left p) = Left p
+	      addStr (Right s) = Right (s++" left")
+
+landBoth :: Birds -> Birds -> Pole -> Either Pole String
+landBoth n1 n2 (left, right) = addStr (updatePole (left + n1, right + n2))
+	where addStr (Left p) = Left p
+	      addStr (Right s) = Right (if (n1>n2) then (s++" left") else (s++" right"))
 
 unlandAll :: Either Pole String
 unlandAll = Left (0,0)
 
 landRight :: Birds -> Pole -> Either Pole String
-landRight n (left, right) = updatePole (left, right + n)
-
-
---banana :: Pole -> Either Pole String
---banana = Right "That was banana..."
-
-{-
-tests = all test [1..3]
-  where
-    test 1 = (return (0, 0) >>= landLeft 1 >>= landRight 4 
-              >>= landLeft (-1) >>= landRight (-2)) == Right
-    test 2 = (return (0, 0) >>= landRight 2 >>= landLeft 2 >>= landRight 2) == Just (2, 4)
-    test 3 = (return (0, 0) >>= landLeft 1 >>= banana >>= landRight 1) == Nothing
--}
+landRight n (left, right) = addStr (updatePole (left, right + n))
+	where addStr (Left p) = Left p
+	      addStr (Right s) = Right (s++" right")
