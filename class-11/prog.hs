@@ -5,14 +5,14 @@ recvFucntionByName :: String -> BinarOpInt
 recvFucntionByName "summand" = (+)
 recvFucntionByName "multiplier" = (*)
 recvFucntionByName "divisor" = (div)
-recvFucntionByName _ = error "WRONG OPERATION!!!!!!!!!" -- (\x y -> (x+y)/0)
+recvFucntionByName _ = (\x y -> y) -- error "WRONG OPERATION!!!!!!!!!" (\x y -> (x+y)/0)
 
 type Operat = (String, Int)
 type BinarOpInt = (Int->Int->Int)
 
 
 divideString :: String -> Operat
-divideString [] = error "WRONG OPERATION!!!!!!!!!"
+divideString [] = ("summand", 0) -- error "WRONG OPERATION!!!!!!!!!"
 divideString (x:xs)
 	|(x/='=')=let (oper, val) = (divideString xs) in (x:oper,val)
 	|otherwise=([],(read xs))
