@@ -20,6 +20,22 @@ divideString (x:xs)
 mapAllOperations :: Int -> [Operat] -> Int
 mapAllOperations value operList = foldl (\value (op,num) -> (recvFucntionByName op) num value) value operList
 
+mapAllOperations1 :: [Operat] -> Int -> Int
+mapAllOperations1 operList value = foldl (\value (op,num) -> (recvFucntionByName op) num value) value operList
+
+operationsFromFile :: String -> IO [Operat]
 operationsFromFile fname = readFile fname >>= (return . (map (divideString)) . lines)
 
-main = getArgs >>= \(x:y:xs) -> operationsFromFile x >>= return . (mapAllOperations (read y))
+readAllInt :: String -> IO [Int]
+readAllInt fname = readFile fname >>= (return . (map (read)). words . (foldr (++) []) . lines)
+
+mapOperationsToIntList :: [Int] -> [Operat] -> [Int]
+mapOperationsToIntList l op = map (\x -> mapAllOperations x op) l
+
+task11 :: String -> [Operat] -> IO [Int]
+task11 fname op = readFile fname >>= (return . (map (mapAllOperations1 op)) . (map (read)). words . (foldr (++) []) . lines)
+
+toPritableString :: [Int] -> String
+toPritableString (z:zs) = foldl (\x y-> x ++ ('\n':(show y))) (show z) zs
+
+main = getArgs >>= \(x:y:xs) -> operationsFromFile x >>= (task11 y) >>= return . toPritableString
