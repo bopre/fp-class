@@ -1,29 +1,3 @@
- Skip to content
-This repository
-
-    Explore
-    Gist
-    Blog
-    Help
-
-    bopre bopre
-
-You don't have any verified emails. We recommend verifying at least one email.
-
-Email verification helps our support team verify ownership if you lose account access and allows you to receive all the notifications you ask for.
-
-    3
-    0
-    46
-
-bravit/fp-class
-
-fp-class / class-01.hs
-Vitaly Bragilevsky bravit on 8 Sep
-Мелкие правки в первом задании
-
-1 contributor
-260 lines (192 sloc) 9.893 kb
 -- IT314. Функциональное программирование
 -- Занятие 1
 -- 1) Функция без параметров (= константа)
@@ -216,17 +190,3 @@ isPrime = undefined
 nDays year = undefined
 where
 isLeap = undefined
-
-    Status
-    API
-    Training
-    Shop
-    Blog
-    About
-
-    © 2014 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Contact
-
