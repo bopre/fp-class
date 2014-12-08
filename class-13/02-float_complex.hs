@@ -1,10 +1,43 @@
 import Parser
 import SimpleParsers
 import ParseNumbers
+import System.Environment
+import Control.Applicative
 
 {- Напишите парсер для вещественных чисел. -}
+
 float :: Parser Float
-float = undefined
+float = (*) <$> minus <*> positive_float
+	where
+		minus = (char '-' >> return (-1)) <|> return 1
+
+positive_float :: Parser Float
+positive_float = (+) <$> natural2 <*> pointNatural
+	where pointNatural = (\x y-> if (x==0) then 0 else  (y / x) ) <$> ppoint <*> step1
+	      ppoint = (char '.' >> return 10)
+	      step1 = foldr1 (\m n -> (m / 10) + n) `fmap` many12 digit
+	      natural2 = foldl1 (\m n -> m*10 + n) `fmap` many12 digit
+
+{-
+	where 	f [] = []
+		f str = let (r1,t1,has_comma) = findComma str in if (r1 == "") then [] 
+							else if has_comma then let r2 = (findTail t1) in if (r2/="") then read(r1++('.':r2)) else (read r1)
+						     else (read r1)
+	        findComma [] = ([],[],True)
+	        findComma (x:xs) = if (x>'0')&&(x<'9') then 
+							let (r,t, hc)=findComma xs 
+								in (x:r,xs,hc) else if (x=='.') then ([],xs,True) else ([],xs,False)
+	        findTail [] = []
+	        findTail (x:xs) = if (x>'0')&&(x<'9') then x:(findTail xs) else []
+-}
+
+natural1 = foldl1 (\m n -> m*10 + n) `fmap` many12 digit
+
+many2 :: Parser a -> Parser [a]
+many2 p = many12 p <|> return []
+
+many12 :: Parser a -> Parser [a]
+many12 p = (:) <$> p <*> many2 p
 
 {-
   Напишите парсер для представления комплексных чисел,
