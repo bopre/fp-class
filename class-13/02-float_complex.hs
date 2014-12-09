@@ -38,21 +38,6 @@ positive_float = ((+) <$> natural2 <*> pointNatural) <|> natural2
 	      step1 = foldr1 (\m n -> (m / 10) + n) `fmap` many12 digitF
 	      natural2 = foldl1 (\m n -> m*10 + n) `fmap` many12 digitF
 
-{-
-	where 	f [] = []
-		f str = let (r1,t1,has_comma) = findComma str in if (r1 == "") then [] 
-							else if has_comma then let r2 = (findTail t1) in if (r2/="") then read(r1++('.':r2)) else (read r1)
-						     else (read r1)
-	        findComma [] = ([],[],True)
-	        findComma (x:xs) = if (x>'0')&&(x<'9') then 
-							let (r,t, hc)=findComma xs 
-								in (x:r,xs,hc) else if (x=='.') then ([],xs,True) else ([],xs,False)
-	        findTail [] = []
-	        findTail (x:xs) = if (x>'0')&&(x<'9') then x:(findTail xs) else []
--}
-
-natural1 = foldl1 (\m n -> m*10 + n) `fmap` many12 digit
-
 many2 :: Parser a -> Parser [a]
 many2 p = many12 p <|> return []
 
@@ -65,8 +50,15 @@ many12 p = (:) <$> p <*> many2 p
   в круглых скобках, например, "(2.3, 1)".
   
 -}
+
 complex :: Parser (Float, Float)
-complex = undefined
+complex = (,) <$> leftP <*> rightP
+	where   leftP = (+) <$> leftBracket <*> float
+		leftBracket = (char '(' >> return 0.0)
+		rightP = (+) <$> ccomma <*> endP
+		ccomma = (char ',' >> return 0.0)
+		endP = (+) <$> float <*> rightBracket
+		rightBracket = (char ')' >> return 0.0)
 
 {-
   Напишите парсер для списка комплексных чисел (разделитель — точка с запятой),
