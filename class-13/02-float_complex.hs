@@ -11,12 +11,32 @@ float = (*) <$> minus <*> positive_float
 	where
 		minus = (char '-' >> return (-1)) <|> return 1
 
+digitF :: Parser Float
+digitF = digitToFloat `fmap` sat isDigit
+
+digitToFloat :: Char -> Float
+digitToFloat c
+	|c=='0'=0
+	|c=='1'=1
+	|c=='2'=2
+	|c=='3'=3
+	|c=='4'=4
+	|c=='5'=5
+	|c=='6'=6
+	|c=='7'=7
+	|c=='8'=8
+	|c=='9'=9
+
+isDigit :: Char -> Bool
+isDigit c = (c>='0')&&(c<='9')
+
+
 positive_float :: Parser Float
-positive_float = (+) <$> natural2 <*> pointNatural
+positive_float = ((+) <$> natural2 <*> pointNatural) <|> natural2
 	where pointNatural = (\x y-> if (x==0) then 0 else  (y / x) ) <$> ppoint <*> step1
 	      ppoint = (char '.' >> return 10)
-	      step1 = foldr1 (\m n -> (m / 10) + n) `fmap` many12 digit
-	      natural2 = foldl1 (\m n -> m*10 + n) `fmap` many12 digit
+	      step1 = foldr1 (\m n -> (m / 10) + n) `fmap` many12 digitF
+	      natural2 = foldl1 (\m n -> m*10 + n) `fmap` many12 digitF
 
 {-
 	where 	f [] = []
