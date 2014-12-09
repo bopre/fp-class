@@ -64,16 +64,39 @@ complex = (,) <$> leftP <*> rightP
   Напишите парсер для списка комплексных чисел (разделитель — точка с запятой),
   заключённого в квадратные скобки.
 -}
+
+
+{-
+symbol s = space >> string s
+
+token p = space >> p
+-}
+
+{-
+bracket op cl p = do
+	symbol op
+	x <- p
+	symbol cl
+	return x
+-}
+--intList = bracket "[" "]" $ sepBy (token integer) (symbol ",")
+
+
+
 complexList :: Parser [(Float, Float)]
-complexList = undefined
+complexList = bracket "[" "]" $ sepBy (token complex) (symbol ";")
 
 {-
   Модифицируйте предыдущий парсер таким образом, чтобы в исходной строке
   могли встречаться как комплексные числа, так и вещественные (мнимая часть
   при этом должна считаться равной нулю).
 -}
+
+
+complex2 = (complex ) <|> ((,) <$> float <*> (return 0))
+
 complexList2 :: Parser [(Float, Float)]
-complexList2 = undefined
+complexList2 = bracket "[" "]" $ sepBy (token complex2) (symbol ";")
 
 {-
    Модифицируйте предыдущий парсер таким образом, чтобы компоненты списка
